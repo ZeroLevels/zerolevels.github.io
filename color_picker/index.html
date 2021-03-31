@@ -1,0 +1,126 @@
+<html>
+
+<head>
+	<style>
+	body{background:black;color:white}
+	div {
+		display: inline-block
+	}
+	#color {
+		height: 286px;
+		width: 286px;
+		position: relative;
+		border:2px solid white
+	}
+	.hex {
+		width: 290px;
+		text-align: center
+	}
+	.hex,label{
+		font-family:Monospace
+	}
+	.color{
+		font-size: 2em;
+		line-height:.75em;
+	}
+	.link{font-size: .75em;}
+	.slider {
+		width: 256px
+	}
+	form {
+		display: inline-block;
+		margin:0;
+	}
+	#inv{
+		font-size:1.5em;
+		line-height:0;
+		user-select:none;
+	}
+	#link{
+		transform:scale(0.0000000000001);
+		position:absolute;
+		line-height:0;
+	}
+	#copier::after{
+		content:'Click here to copy color-link'
+	}
+	#copier:hover{color:#ffa}
+	#copier:active::after{
+		content:'U w U';
+		animation: shake 10s;
+		animation-fill-mode: forwards
+	}
+	
+	@keyframes shake {
+		0% {content:'U w U'}
+		25% {content:"O w O"}
+		50% {content:"O w O"; color:#ffa}
+		75%{content:"O///O"; color:#faa}
+		100% {content:">///<"; color:#faa}
+	}
+	</style>
+	<style></style>
+	<style></style>
+</head>
+
+<body>
+	<div id='color_picker'>
+		<div class='hex color'>#<span id='hex'></span></div><br>
+		<div class='hex' class='inverted'>inverted: #<span id='hexI'></span> <span id='inv' onclick='invertRGB()'>&#9632;</span></div><br>
+		<div id='color'></div><br>
+		<form><label for='R'>R</label><input type="range" max="255" value="127" class="slider" id="R" oninput='setRGB()'><label for='R'></label><br><label for='G'>G</label><input type="range" max="255" value="127" class="slider" id="G" oninput='setRGB()'><label for='G'></label><br><label for='B'>B</label><input type="range" max="255" value="127" class="slider" id="B" oninput='setRGB()'><label for='B'></label></form><br>
+		<div class='hex' id='copier' onclick='window.getSelection().selectAllChildren(document.getElementById("link"));document.execCommand("copy");window.getSelection().removeAllRanges()'><p id='link'></p></div>
+	</div>
+	<script>
+	var tn=e=>document.getElementsByTagName(e),
+			qsa=e=>document.querySelectorAll("[for=" + e + "]")[1].innerText = idv(e),
+			id=e=>document.getElementById(e)
+			idv=e=>id(e).value,
+			c=",",
+			rgbI='';
+
+	function lightness(){
+		var r=idv("R")/2.55,g=idv("G")/2.55,b=idv("B")/2.55;
+		return Math.round((Math.max(r,g,b) + Math.min(r,g,b))/2)
+	}
+	function toHex(e) {
+		return (parseInt(e).toString(16).padStart(2, 0)).toUpperCase()
+	}
+
+	if(location.href.includes('?')){
+		var pre = location.href.split('?')[1];
+		if(pre.includes(',')){
+			var nums = pre.split(',');
+			if (!nums.some(isNaN)){
+				if(parseInt(nums[0])<=255){id('R').value=parseInt(nums[0])}
+				if(parseInt(nums[1])<=255){id('G').value=parseInt(nums[1])}
+				if(parseInt(nums[2])<=255){id('B').value=parseInt(nums[2])}
+			}
+		}
+	}
+
+	function setRGB() {
+		var R=idv("R"),G=idv("G"),B=idv("B"),
+			rgb=toHex(R)+toHex(G)+toHex(B);
+		rgbI=toHex(255-R)+toHex(255-G)+toHex(255-B);
+		qsa("R"), qsa("G"), qsa("B"),
+		tn("style")[1].innerHTML = "#color{background:#"+rgb+"}#inv{color:#"+rgbI+"}",
+		id("hex").innerText=rgb,
+		id("hexI").innerText=rgbI
+		id('link').innerText=location.href.includes('?')?location.href.split('?')[0]+'?'+R+c+G+c+B:location.href+'?'+R+c+G+c+B
+		if(lightness()>50){tn("style")[1].innerHTML += "#color{border-color:hsl(0,0%,"+(100-(lightness()-50))+"%)}"}
+	}setRGB();
+	
+	function invertRGB(){
+		id('R').value=parseInt(rgbI.slice(0,2),16),
+		id('G').value=parseInt(rgbI.slice(2,4),16),
+		id('B').value=parseInt(rgbI.slice(4,6),16),
+		setRGB()
+	}
+	
+	var resize=()=>tn('style')[2].innerHTML=(window.innerHeight/id('color_picker').clientHeight>=1)?"#color_picker{transform-origin:top left;transform:scale("+(window.innerHeight / id('color_picker').clientHeight - 0.1)+")}":'';resize();
+	
+	window.onresize=function(){resize()}
+	</script>
+</body>
+</html>
