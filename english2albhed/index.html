@@ -16,26 +16,8 @@
 			#out {background: #171717}
 			</style>
 			
-			<script>
-			var bet = 'abcdefghijklmnopqrstuvwxyz',
-					BET = bet.toUpperCase(),
-					bhed = 'ypltavkrezgmshubxncdijfqow',
-					BHED = bhed.toUpperCase();
-
-			function e2a(input, toEnglish = false) {
-				var a, A, b, B, output = [];
-				!toEnglish ? [a, A, b, B] = [bet, BET, bhed, BHED] : [a, A, b, B] = [bhed, BHED, bet, BET]
-				input.split('').forEach(e => output.push((a.includes(e) ? b[a.indexOf(e)] : A.includes(e) ? B[A.indexOf(e)] : e)))
-				return output.join('')
-			}
-
-			function translateAlbhed(input, toEnglish = false) {
-				var output = []
-				input.split(' ').forEach(e => output.push((!e.startsWith('//') ? e2a(e, toEnglish) : e.slice(2))))
-				return output.join(' ')
-			}
-			</script>
+			<script src='en2al.js'></script>
 		</head>
-		<textarea id='in' placeholder='Type here to translate from English to Al-Bhed.&#13;&#13;You can skip a word by starting it with two forward-slashes (//).' oninput='document.getElementsByTagName("textarea")[1].value=translateAlbhed(this.value)'></textarea><textarea id='out' placeholder='Or over here to convert from Al-Bhed to English.' oninput='document.getElementsByTagName("textarea")[0].value=translateAlbhed(this.value,true)'></textarea>
+		<textarea id='in' placeholder='Type here to translate&#13;from English to Al-Bhed.&#13;&#13;You can skip a word by starting&#13;it with a single backslash (\).' oninput='this.nextSibling.value=en2al(this.value)'></textarea><textarea id='out' placeholder='Or over here to convert&#13;from Al-Bhed to English.' oninput='this.previousSibling.value=en2al(this.value,true)'></textarea>
 	</body>
 <html>

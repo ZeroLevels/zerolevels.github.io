@@ -78,6 +78,29 @@
 			idv=e=>id(e).value,
 			c=",",
 			rgbI='';
+			
+	function validHEX(hex){
+		var noHash = hex.replace('#','').toUpperCase(),
+				range = '0123456789ABCDEF'.split(''),
+				checker = (arr1, arr2) => arr1.every(v => arr2.includes(v));
+		
+		return (noHash.length==6 || noHash.length==3) && checker(noHash.split(''), range);
+	}
+	
+	function hex2rgb (hex, bare=false){
+		if(validHEX(hex)){
+			var HEX = hex.replace('#','');
+			if(HEX.length==3){
+				HEX = HEX[0]+HEX[0]+HEX[1]+HEX[1]+HEX[2]+HEX[2]
+			}
+			var R = parseInt(HEX.slice(0,2),16),
+					G = parseInt(HEX.slice(2,4),16),
+					B = parseInt(HEX.slice(4,6),16);
+			return bare ? [R,G,B] : 'rgb('+R+','+G+','+B+')';
+		} else {
+			console.log('Not valid HEX')
+		}
+	}
 
 	function lightness(){
 		var r=idv("R")/2.55,g=idv("G")/2.55,b=idv("B")/2.55;
@@ -88,14 +111,19 @@
 	}
 
 	if(location.href.includes('?')){
-		var pre = location.href.split('?')[1];
-		if(pre.includes(',')){
-			var nums = pre.split(',');
+		var post = location.href.split('?')[1];
+		if(post.includes(',')){
+			var nums = post.split(',');
 			if (!nums.some(isNaN)){
 				if(parseInt(nums[0])<=255){id('R').value=parseInt(nums[0])}
 				if(parseInt(nums[1])<=255){id('G').value=parseInt(nums[1])}
 				if(parseInt(nums[2])<=255){id('B').value=parseInt(nums[2])}
 			}
+		} else if (!post.includes(',') && validHEX(post)) {
+			var newRGB = hex2rgb(post, true)
+			id('R').value=newRGB[0]
+			id('G').value=newRGB[1]
+			id('B').value=newRGB[2]
 		}
 	}
 
