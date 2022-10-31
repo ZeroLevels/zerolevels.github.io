@@ -1,0 +1,22 @@
+body {
+	background: #071022;
+	color: #CBD9F4
+}
+
+div, table {
+	background: #172136
+}
+
+table, td, tr {
+	border: 1px solid #CBD9F4;
+	border-collapse: collapse
+}
+
+thead td {
+	background: #CBD9F4;
+	color: #071022
+}
+
+td {
+	padding: 2px 5px 2px 5px;
+}
