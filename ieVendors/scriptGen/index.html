@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="style/common.css">
+		<style>
+			body {
+				width: 500px;
+				margin: auto
+			}
+			input {
+				width: 100%;
+			}
+			pre {
+				border: 1px dashed #CBD9F4;
+				padding: 5px;
+				
+				overflow-x: auto;
+				white-space: pre-wrap;
+				white-space: -moz-pre-wrap;
+				white-space: -pre-wrap;
+				white-space: -o-pre-wrap;
+				word-wrap: break-word;
+			}
+			
+			.intro {
+				display: block;
+				padding: 5px;
+			}
+			
+			.white {
+				color: white
+			}
+			
+			.green, .red {
+				font-weight: bold
+			}
+			
+			.green {
+				color: #a9F4b7
+			}
+			
+			.red {
+				color: #F4a9b7
+			}
+		</style>
+	</head>
+
+	<body>
+		<div><span class="intro">Injection scripts are actually somewhat easy once you've made a few. This page will help you generate the code you need to make a simple injection. Just paste the code generated here as the source code.</span><input placeholder="The name of your script file." oninput="updatePreview()"></input><input placeholder="The items or lists you wish to inject into the target. Comma separated." oninput="updatePreview()"></input>
+		<input placeholder="Type the EditorID of the LeveledList you'd like to add the above items to." oninput="updatePreview()"></input>
+		</div>
+		<pre></pre>
+		<script>
+			var inputs = [...document.querySelectorAll('input')];
+			var rWS =e=> e.replace(/\s+/g, ''),
+					splitTrim =e=> e.includes(',') ? e.split(',').map((i,n)=>i ? rWS(i) : "exampleItem_number_" + n) : rWS(e),
+					noSymbols =e=> [...e].filter(l=> /^[a-zA-Z1-9_]+$/.test(l)).join``,
+					onlyCommas =e=> [...e].filter(l=> /^[a-zA-Z1-9_,]+$/.test(l)).join``;
+		
+			
+			
+			function updatePreview () {
+				var scriptName = noSymbols(inputs[0].value) ? noSymbols(inputs[0].value) : "exampleScriptName",
+					itemsAndLists = onlyCommas(inputs[1].value) ? (splitTrim(onlyCommas(inputs[1].value))) : splitTrim("exampleItem, LL_exampleLeveledList"),
+					targetList = noSymbols(inputs[2].value ? rWS(inputs[2].value) : "exampleTargetList");
+			
+				var things2inject;
+				var initialize;
+				
+				var scriptStart = "Scriptname " + scriptName + " extends Quest\n\n";
+				var targetedList = "LeveledItem Property " + targetList + " Auto Const\n\n";
+				
+				if (typeof itemsAndLists == "object") {
+					things2inject = itemsAndLists.map(LL=>"LeveledItem Property " + LL + " Auto Const").join("\n") + "\n\n";
+					initialize = "Event OnQuestInit()\n\t" + itemsAndLists.map(LL=>targetList + ".AddForm(" + LL + ", 1, 1)").join("\n\t") + "\nEndEvent"
+				} else {
+					things2inject = "LeveledItem Property " + itemsAndLists + " Auto Const\n\n";
+					initialize = "Event OnQuestInit()\n\t" + targetList + ".AddForm(" + itemsAndLists + ", 1, 1)\nEndEvent"
+				}
+
+				document.querySelector('pre').innerText = scriptStart + things2inject + targetedList + initialize
+			}
+			
+			updatePreview()
+		</script>
+		<div><span class="intro">The 1s in the following line represent the <span class="green">Player Level</span> in which your items will start appearing, and <span class="red">how many times</span> that item/list will appear in the loot table:<br><br><span class="white">exampleTargetList.AddForm(exampleItem, </span><span class="green">1</span><span class="white">,</span> <span class="red">1</span><span class="white">)</span></div>
+	</body>
+</html>
