@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<link rel="stylesheet" href="style/common.css">
+		<link rel="stylesheet" href="../style/common.css">
 		<style>
 			body {
 				width: 500px;
@@ -26,6 +26,11 @@
 				padding: 5px;
 			}
 			
+			.mono {
+				font-family: monospace;
+				font-size: 1.25em
+			}
+			
 			.white {
 				color: white
 			}
@@ -48,7 +53,7 @@
 		<div><span class="intro">Injection scripts are actually somewhat easy once you've made a few. This page will help you generate the code you need to make a simple injection. Just paste the code generated here as the source code.</span><input placeholder="The name of your script file." oninput="updatePreview()"></input><input placeholder="The items or lists you wish to inject into the target. Comma separated." oninput="updatePreview()"></input>
 		<input placeholder="Type the EditorID of the LeveledList you'd like to add the above items to." oninput="updatePreview()"></input>
 		</div>
-		<pre></pre>
+		<pre title="Code preview"></pre>
 		<script>
 			var inputs = [...document.querySelectorAll('input')];
 			var rWS =e=> e.replace(/\s+/g, ''),
@@ -82,6 +87,6 @@
 			
 			updatePreview()
 		</script>
-		<div><span class="intro">The 1s in the following line represent the <span class="green">Player Level</span> in which your items will start appearing, and <span class="red">how many times</span> that item/list will appear in the loot table:<br><br><span class="white">exampleTargetList.AddForm(exampleItem, </span><span class="green">1</span><span class="white">,</span> <span class="red">1</span><span class="white">)</span></div>
+		<div><span class="intro">The 1s in the following line represent the <span class="green">Player Level</span> in which your items will start appearing, and <span class="red">the quantity</span> of said items/lists within the loot table:<br><br><span class="mono"><span class="white">exampleTargetList.AddForm(exampleItem, </span><span class="green" title="What level your character must be for loot to start appearing in the target list.">1</span><span class="white">,</span> <span class="red" title="Quantity of your items/lists">1</span><span class="white">)</span></span></div>
 	</body>
 </html>

@@ -1,0 +1,104 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="../style/common.css"/>
+		<script src="data/lists/vendors.js"></script>
+		<script src="data/lists/fo4.js"></script>
+		<script src="data/lists/uniqueItems.js"></script>
+		<script src="functions/infoGrabber.js"></script>
+		
+		<style>
+			.infoBox {
+				position: absolute;
+				right: 0px;
+				top: 0px
+			}
+			
+			td:nth-child(1), td:nth-child(2), td:nth-child(3) {
+				text-align: center;
+			}
+			
+			tbody tr:hover {
+				background: #173621
+			}
+			
+			td span:hover {
+				color: #F4CBD9
+			}
+		</style>
+	</head>
+
+	<body>
+	<span>Hard items, such as weapons and armor, have been identified within parenthesis after each item. Leveled Lists have been left blank.</span><br><br>
+	<input id="searchName" oninput="searchName(noSymbols(this.value.toLowerCase()));search()" placeholder="Search by Name"></input><input id="searchPlace" oninput="searchPlace(noSymbols(this.value.toLowerCase()));search()" placeholder="Search by Place"></input><input id="searchItem" oninput="searchItems(noSymbols(this.value.toLowerCase()));search()" placeholder="Search by Item"></input>
+		<table>
+			<thead style="position: sticky">
+				<tr><th>Vendor Name</th><th>Location</th><th>Container List</th><th>Contents</th></tr>
+			</thead>
+				
+			<tbody>
+			</tbody>
+		</table>
+		<script>
+			Array.prototype.flatten = function (concurrent = false) {
+				var result = [];
+				
+				if (this === []) {
+					return [];
+				}
+				
+				this.forEach(item=>{
+					if (Array.isArray(item)) {
+						result.push(...item)
+					} else {
+						result.push(item)
+					}
+				})
+				
+				if (concurrent) {
+					while (!result.every(i=>!Array.isArray(i))){
+						var hold = [...result];
+						result = [];
+						
+						hold.forEach(item=>{
+							if (Array.isArray(item)) {
+								result.push(...item)
+							} else {
+								result.push(item)
+							}
+						})
+					}
+					return result;
+				} 
+				return result;
+			}
+			
+			var id =e=> document.getElementById(e),
+					qS =e=> document.querySelector(e),
+					qSA =e=> document.querySelectorAll(e),
+					noSymbols =e=> [...e].filter(l=> /^[a-zA-Z1-9\& ]+$/.test(l)).join``,
+					simplifyItems =e=> [...new Set(getItemsOnly(e).map(i=>i.split("_")).flatten(true))].join(' ');
+		
+			function infoBuilder (e) {
+				qS(".infoBox").innerHTML=getList(fo4[e]).join("\n")
+			};
+			
+			vendorList.forEach(e=>{
+				qS("tbody").innerHTML+="<tr><td>"+e[0]+"</td><td>"+e[1]+"</td><td class='queryInfo'>"+e[2]+"</td><td>"+getList(fo4[e[2]])+"</td></tr>";
+			});
+			
+			[...qSA("td:nth-child(1)")].forEach(e=>e.parentElement.setAttribute("searchname", e.innerText.toLowerCase()));
+			[...qSA("td:nth-child(2)")].forEach(e=>e.parentElement.setAttribute("searchplace", e.innerText.toLowerCase()));
+			[...qSA("td:nth-child(4)")].forEach(e=>e.parentElement.setAttribute("searchItems", simplifyItems(fo4[e.previousSibling.innerText]).toLowerCase()));
+			
+			var searchTerms = ["","",""];
+			
+			var searchName =e=> {searchTerms[0] = e ? "tr:not([searchname*='"+ e +"']):not(thead tr) {display: none}" : ""}
+			var searchPlace =e=> {searchTerms[1] = e ? "tr:not([searchplace*='"+ e +"']):not(thead tr) {display: none}" : ""}
+			var searchItems =e=> {searchTerms[2] = e ? "tr:not([searchitems*='"+ e +"']):not(thead tr) {display: none} [itemsearch*='"+ e +"'] {font-weight: bold; color: #F4CBD9}" : ""}
+			
+			var search=()=> id("jsStyle").innerText = searchTerms.join(' ')
+		</script>
+		
+		<style id="jsStyle"></style>
+	</body>
+</html>
