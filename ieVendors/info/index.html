@@ -39,7 +39,7 @@
 			</tbody>
 		</table>
 		<script>
-			Array.prototype.flatten = function (concurrent = false) {
+			Array.prototype.flatten = function (concurrent = false, unique = false, sort = false) {
 				var result = [];
 				
 				if (this === []) {
@@ -67,9 +67,9 @@
 							}
 						})
 					}
-					return result;
+					return sort ? (unique ? [...new Set(result)] : result).sort() : (unique ? [...new Set(result)] : result);
 				} 
-				return result;
+				return sort ? (unique ? [...new Set(result)] : result).sort() : (unique ? [...new Set(result)] : result);
 			}
 			
 			var id =e=> document.getElementById(e),
@@ -97,6 +97,21 @@
 			var searchItems =e=> {searchTerms[2] = e ? "tr:not([searchitems*='"+ e +"']):not(thead tr) {display: none} [itemsearch*='"+ e +"'] {font-weight: bold; color: #F4CBD9}" : ""}
 			
 			var search=()=> id("jsStyle").innerText = searchTerms.join(' ')
+			
+			var hold = {}, namesList = [...qSA('td:first-child')].map(e=>e.innerText), placesList = [...qSA('td:nth-child(2)')].map(e=>e.innerText), simpleList = [...new Set([...qSA('td:nth-child(2)')].map(e=>e.innerText).sort())], listsList = [...qSA('td:nth-child(3)')].map(e=>e.innerText);
+
+			simpleList.forEach(e=>hold[e] = []);
+			placesList.forEach((e,i)=>hold[e].push(namesList[i] + ", [color=#c9daf8][i]" + listsList[i] + "[/color][/i]\n"));
+			
+			var bbCode = "[list]", mkNameList =e=> "[list]" + e.map(j=>"[*]"+j).sort().join('') + "[/list]";
+
+			Object.keys(hold).forEach(e=>{
+				bbCode = bbCode + "[*][u][size=3]" + e + "[/size][/u]\n" + mkNameList(hold[e])
+			})
+
+			bbCode += "\n[/list]";
+			
+			Object.keys(fo4).forEach(e=>fo4[e]=unshorten(fo4[e]))
 		</script>
 		
 		<style id="jsStyle"></style>

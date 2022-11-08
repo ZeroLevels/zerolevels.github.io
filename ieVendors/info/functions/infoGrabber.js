@@ -17,3 +17,9 @@ function getItemsOnly (e) {
 	var list = e ? e.split(',').map(items=>items.split('|')) : ""
 	return e ? list.map(item=>uniquesSimplified[item[0]]) : ["Empty"]
 }
+
+function unshorten (e) {
+	var list = e ? e.split(',').map(items=>items.split('|')) : ""
+	list ? list.forEach((item) => item[0] = uniquesSimplified[item[0]]) : ""
+	return e ? list.join('|') : ""
+}
